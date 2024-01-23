@@ -16,10 +16,6 @@ class UAVNews(Plugin):
         else:
             self.commands = []  # 默认为空列表，可以在这里设置一个默认命令
 
-    def __init__(self):
-        super().__init__()
-        self.target_date = datetime.now().strftime('%Y-%m-%d')
-
     def get_news(self):
         url = 'https://www.youuav.com/news/search.php'
         headers = {
