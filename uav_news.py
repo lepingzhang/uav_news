@@ -6,6 +6,7 @@ from plugins import register, Plugin, Event, logger, Reply, ReplyType
 
 @register
 class UAVNews(Plugin):
+    name = 'uav_news'  # 定义插件名称
     def __init__(self, config=None):
         # 在调用父类的 __init__ 方法时传递 config 参数
         super().__init__(config=config)  # 确保这里传递了config
