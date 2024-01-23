@@ -1,7 +1,6 @@
-from datetime import datetime
+import re
 import requests
-from bs4 import BeautifulSoup
-from plugins import register
+from plugins import register, Plugin, Event, logger, Reply, ReplyType
 
 @register
 class UAVNews(Plugin):
