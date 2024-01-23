@@ -1,5 +1,7 @@
 import re
 import requests
+from bs4 import BeautifulSoup
+from datetime import datetime
 from plugins import register, Plugin, Event, logger, Reply, ReplyType
 
 @register
@@ -45,3 +47,24 @@ class UAVNews(Plugin):
             return '\n'.join(news_data) if news_data else '抱歉，今天没有找到新闻。'
         else:
             return f'请输入"{self.command}"来获取今日新闻内容。'
+
+    # 添加缺失的抽象方法
+    def did_receive_message(self, message, room):
+        # 在这里处理接收到的消息
+        pass
+
+    def help(self):
+        # 返回一个字符串，描述这个插件的功能和如何使用
+        return "输入 '#获取新闻' 以获取最新的新闻。"
+
+    def will_decorate_reply(self, reply, message, room):
+        # 在这里处理回复修饰
+        return reply
+
+    def will_generate_reply(self, message, room):
+        # 在这里处理回复生成
+        return True
+
+    def will_send_reply(self, reply, message, room):
+        # 在这里处理回复发送前的逻辑
+        pass
