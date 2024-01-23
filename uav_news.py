@@ -39,28 +39,22 @@ class UAVNews(Plugin):
 
     def did_receive_message(self, event: Event):
         query = event.message.content.strip()
-        
+
         sender_id = event.message.sender_id if hasattr(event.message, 'sender_id') else None
         room_id = event.message.room_id if hasattr(event.message, 'room_id') else None
         is_group = event.message.is_group if hasattr(event.message, 'is_group') else False
-        
+
         reply_id = room_id if is_group else sender_id
-        
-        if any(query.endswith(cmd) for cmd in self.commands):
+
+        if query in self.commands:  # 修改这里，确保完全匹配关键字
             news_data = self.get_news()
             response_text = '\n'.join(news_data) if news_data else '抱歉，今天没有找到无人机新闻。'
             if reply_id:
                 send_txt(response_text, reply_id)
                 event.bypass()
         else:
-            commands_str = '", "'.join(self.commands)
-            if is_group:
-                response_text = f'请输入 "@{event.receiver_name} {commands_str}" 中的任一命令来获取今日无人机新闻内容。'
-            else:
-                response_text = f'请输入 "{commands_str}" 中的任一命令来获取今日无人机新闻内容。'
-            if reply_id:
-                send_txt(response_text, reply_id)
-                event.bypass()
+            # 当消息不匹配关键字时，不发送任何回复
+            pass
 
     def help(self, **kwargs) -> str:
         return "输入commend命令获取最新的无人机相关新闻。"
