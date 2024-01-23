@@ -8,7 +8,6 @@ from plugins import register, Plugin, Event, logger, Reply, ReplyType
 class UAVNews(Plugin):
     name = 'uav_news'  # 定义插件名称
     def __init__(self, config=None):
-        # 在调用父类的 __init__ 方法时传递 config 参数
         super().__init__(config=config)  # 确保这里传递了config
         self.target_date = datetime.now().strftime('%Y-%m-%d')
         
@@ -46,20 +45,16 @@ class UAVNews(Plugin):
         except requests.RequestException as e:
             return [f'请求过程中发生错误：{e}']
 
-    def process_message(self, message):
-        # 检查消息是否是定义的命令之一
-        if message in self.commands:
+    def did_receive_message(self, message, room):
+        # 处理收到的消息
+        # 现在这个方法接收两个参数：message 和 room
+        if message in self.commands:  # 使用 self.commands 检查消息是否是定义的命令之一
             news_data = self.get_news()
             return '\n'.join(news_data) if news_data else '抱歉，今天没有找到新闻。'
         else:
             # 如果消息不是预定义命令，提供正确的命令格式
             commands_str = '", "'.join(self.commands)
             return f'请输入 "{commands_str}" 来获取今日新闻内容。'
-
-    # 添加缺失的抽象方法
-    def did_receive_message(self, message, room):
-        # 在这里处理接收到的消息
-        pass
 
     def help(self):
         # 返回一个字符串，描述这个插件的功能和如何使用
