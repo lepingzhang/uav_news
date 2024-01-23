@@ -6,8 +6,15 @@ from plugins import register, Plugin, Event, logger, Reply, ReplyType
 
 @register
 class UAVNews(Plugin):
-    name = "uav_news"
-    command = "#获取新闻"
+    def __init__(self, config=None):
+        super().__init__()
+        self.target_date = datetime.now().strftime('%Y-%m-%d')
+        
+        # 初始化命令配置
+        if config and 'command' in config:
+            self.commands = config['command'] if isinstance(config['command'], list) else [config['command']]
+        else:
+            self.commands = []  # 默认为空列表，可以在这里设置一个默认命令
 
     def __init__(self):
         super().__init__()
@@ -42,11 +49,14 @@ class UAVNews(Plugin):
             return [f'请求过程中发生错误：{e}']
 
     def process_message(self, message):
-        if message == self.command:
+        # 检查消息是否是定义的命令之一
+        if message in self.commands:
             news_data = self.get_news()
             return '\n'.join(news_data) if news_data else '抱歉，今天没有找到新闻。'
         else:
-            return f'请输入"{self.command}"来获取今日新闻内容。'
+            # 如果消息不是预定义命令，提供正确的命令格式
+            commands_str = '", "'.join(self.commands)
+            return f'请输入 "{commands_str}" 来获取今日新闻内容。'
 
     # 添加缺失的抽象方法
     def did_receive_message(self, message, room):
