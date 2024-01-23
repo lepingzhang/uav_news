@@ -1,32 +1,26 @@
-import re
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-from plugins import register, Plugin, Event, logger, Reply, ReplyType
+from plugins import register, Plugin, Event, Reply, ReplyType
+from utils.api import send_txt  # 确保这个导入语句是正确的
 
 @register
 class UAVNews(Plugin):
-    name = 'uav_news'  # 定义插件名称
+    name = 'uav_news'
     def __init__(self, config=None):
-        super().__init__(config=config)  # 确保这里传递了config
+        super().__init__(config=config)
         self.target_date = datetime.now().strftime('%Y-%m-%d')
-        
-        # 初始化命令配置
-        if config and 'command' in config:
-            self.commands = config['command'] if isinstance(config['command'], list) else [config['command']]
-        else:
-            self.commands = []  # 默认为空列表，可以在这里设置一个默认命令
+        self.commands = self.config.get('command', [])
 
     def get_news(self):
         url = 'https://www.youuav.com/news/search.php'
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
         }
+        news_data = []
 
         try:
             response = requests.get(url, headers=headers)
-            news_data = []
-
             if response.status_code == 200:
                 soup = BeautifulSoup(response.text, 'html.parser')
                 news_items = soup.find_all('li', class_='indent')
@@ -38,36 +32,45 @@ class UAVNews(Plugin):
                             news_link = item.find('a')['href']
                             news_title = item.find('a')['title']
                             news_data.append(f'标题: {news_title}\n链接: {news_link}\n')
-                        else:
-                            break
-            return news_data
+        except Exception as e:
+            news_data.append('抱歉，无法获取无人机新闻。')
+        
+        return news_data
 
-        except requests.RequestException as e:
-            return [f'请求过程中发生错误：{e}']
-
-    def did_receive_message(self, message, room):
-        # 处理收到的消息
-        # 现在这个方法接收两个参数：message 和 room
-        if message in self.commands:  # 使用 self.commands 检查消息是否是定义的命令之一
+    def did_receive_message(self, event: Event):
+        query = event.message.content.strip()
+        
+        sender_id = event.message.sender_id if hasattr(event.message, 'sender_id') else None
+        room_id = event.message.room_id if hasattr(event.message, 'room_id') else None
+        is_group = event.message.is_group if hasattr(event.message, 'is_group') else False
+        
+        reply_id = room_id if is_group else sender_id
+        
+        if any(query.endswith(cmd) for cmd in self.commands):
             news_data = self.get_news()
-            return '\n'.join(news_data) if news_data else '抱歉，今天没有找到新闻。'
+            response_text = '\n'.join(news_data) if news_data else '抱歉，今天没有找到无人机新闻。'
+            if reply_id:
+                send_txt(response_text, reply_id)
+                event.bypass()
         else:
-            # 如果消息不是预定义命令，提供正确的命令格式
             commands_str = '", "'.join(self.commands)
-            return f'请输入 "{commands_str}" 来获取今日新闻内容。'
+            if is_group:
+                response_text = f'请输入 "@{event.receiver_name} {commands_str}" 中的任一命令来获取今日无人机新闻内容。'
+            else:
+                response_text = f'请输入 "{commands_str}" 中的任一命令来获取今日无人机新闻内容。'
+            if reply_id:
+                send_txt(response_text, reply_id)
+                event.bypass()
 
-    def help(self):
-        # 返回一个字符串，描述这个插件的功能和如何使用
-        return "输入 '#获取新闻' 以获取最新的新闻。"
+    def help(self, **kwargs) -> str:
+        return "输入commend命令获取最新的无人机相关新闻。"
 
-    def will_decorate_reply(self, reply, message, room):
-        # 在这里处理回复修饰
-        return reply
+    def will_generate_reply(self, event: Event):
+        query = event.message
+        return query in self.commands
 
-    def will_generate_reply(self, message, room):
-        # 在这里处理回复生成
-        return True
+    def will_decorate_reply(self, event: Event):
+        pass
 
-    def will_send_reply(self, reply, message, room):
-        # 在这里处理回复发送前的逻辑
+    def will_send_reply(self, event: Event):
         pass
