@@ -2,8 +2,8 @@
 from plugin import Plugin, register
 
 @register
-class DailyNews(Plugin):
-    name = "daily_news"
+class UAVNews(Plugin):
+    name = "uav_news"
     command = "#获取新闻"
 
     def __init__(self):
