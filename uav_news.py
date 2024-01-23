@@ -7,7 +7,8 @@ from plugins import register, Plugin, Event, logger, Reply, ReplyType
 @register
 class UAVNews(Plugin):
     def __init__(self, config=None):
-        super().__init__()
+        # 在调用父类的 __init__ 方法时传递 config 参数
+        super().__init__(config=config)  # 确保这里传递了config
         self.target_date = datetime.now().strftime('%Y-%m-%d')
         
         # 初始化命令配置
