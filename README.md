@@ -1,4 +1,4 @@
-# wechat-gptbot新闻获取插件
+# wechat-gptbot 新闻获取插件
 
 本项目作为 `wechat-gptbot` 插件，可以根据关键字回复对应的信息。
 
@@ -21,7 +21,7 @@
 "plugins": [
   {
     "name": "uav_news",
-    "command": ["无人机新闻", "无人机最新资讯"],
+    "command": ["无人机新闻", "无人机资讯"],
   }
 ]
 ```
