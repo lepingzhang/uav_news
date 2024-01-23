@@ -1,5 +1,5 @@
 # __init__.py
-from plugin import Plugin, register
+from .plugin import Plugin, register
 
 @register
 class UAVNews(Plugin):
