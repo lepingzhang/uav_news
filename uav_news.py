@@ -1,8 +1,7 @@
-# __init__.py
 from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
-from .plugin import Plugin, register
+from plugins import register
 
 @register
 class UAVNews(Plugin):
