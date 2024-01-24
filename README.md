@@ -10,7 +10,7 @@
 {
   "keyword_reply": {
     "repo": "https://github.com/lepingzhang/uav_news.git",
-    "desc": "手动获取无人机新闻"
+    "desc": "无人机新闻"
   }
 }
 ```
