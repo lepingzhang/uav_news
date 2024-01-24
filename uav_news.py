@@ -13,6 +13,7 @@ class UAVNews(Plugin):
         self.commands = self.config.get('command', [])
 
     def get_news(self):
+        self.target_date = datetime.now().strftime('%Y-%m-%d')
         url = 'https://www.youuav.com/news/search.php'
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
