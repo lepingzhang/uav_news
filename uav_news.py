@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -40,6 +41,7 @@ class UAVNews(Plugin):
 
     def did_receive_message(self, event: Event):
         query = event.message.content.strip()
+        query = re.sub(r'@\w+\s', '', query)
 
         sender_id = event.message.sender_id if hasattr(event.message, 'sender_id') else None
         room_id = event.message.room_id if hasattr(event.message, 'room_id') else None
@@ -47,7 +49,7 @@ class UAVNews(Plugin):
 
         reply_id = room_id if is_group else sender_id
 
-        if query in self.commands:  # 修改这里，确保完全匹配关键字
+        if any(re.fullmatch(command, query) for command in self.commands):
             news_data = self.get_news()
             response_text = '\n'.join(news_data) if news_data else '抱歉，今天没有找到无人机新闻。'
             if reply_id:
