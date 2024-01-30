@@ -3,11 +3,12 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from plugins import register, Plugin, Event, Reply, ReplyType
-from utils.api import send_txt  # 确保这个导入语句是正确的
+from utils.api import send_txt
 
 @register
 class UAVNews(Plugin):
     name = 'uav_news'
+
     def __init__(self, config=None):
         super().__init__(config=config)
         self.target_date = datetime.now().strftime('%Y-%m-%d')
@@ -56,7 +57,6 @@ class UAVNews(Plugin):
                 send_txt(response_text, reply_id)
                 event.bypass()
         else:
-            # 当消息不匹配关键字时，不发送任何回复
             pass
 
     def help(self, **kwargs) -> str:
