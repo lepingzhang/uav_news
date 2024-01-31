@@ -1,4 +1,4 @@
-# wechat-gptbot 新闻获取插件
+# wechat-gptbot 无人机新闻获取插件
 
 本项目作为 `wechat-gptbot` 插件，可以根据关键字回复对应的信息。
 
@@ -10,7 +10,7 @@
 {
   "keyword_reply": {
     "repo": "https://github.com/lepingzhang/uav_news.git",
-    "desc": "无人机新闻"
+    "desc": "每天定时或手动获取无人机新闻"
   }
 }
 ```
@@ -22,6 +22,9 @@
   {
     "name": "uav_news",
     "command": ["无人机新闻", "无人机资讯"],
+    "schedule_time": "",
+    "single_chat_list": [""],
+    "group_chat_list": [""]
   }
 ]
 ```
